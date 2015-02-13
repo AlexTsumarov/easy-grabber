@@ -324,15 +324,20 @@ class Grabber_Controller_Thread extends Grabber_Core_Abstract {
 		if ( isset( $_GET[ 'path' ] ) )
 			$url = $_GET[ 'path' ];
 
-		$post	 = new Grabber_Parser_Page( );
-		$css	 = new Grabber_Parser_Css( );
-		$wpapi	 = new Grabber_Model_Wpapi( );
+		$log = '1122';
 
-		$data = $post->grab( $url );
-		$css->setData( $data )->generate();
-		$wpapi->save_post( $d );
+		$c	 = new Grabber_Parser_Css( $this->conf );
+		$p	 = new Grabber_Parser_Page( $this->conf );
 
-		echo $this->conf->grablog;
+		$p->page( $url );
+		$d	 = $p->getData();
+		$c->setData( $d );
+		$out = $c->insertCss();
+
+		$wpapi	 = new Grabber_Model_Wpapi( $this->conf );
+		$p		 = $wpapi->save_post( $d );
+
+		echo $log;
 	}
 
 }

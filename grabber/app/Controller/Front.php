@@ -16,8 +16,18 @@ class Grabber_Controller_Front extends Grabber_Core_Abstract
      */
     public function add_wp_css_fixes()
     {
-        wp_register_style('wp-frabber-fixes', plugins_url('/grabber/resources/css/wp-fixes.css', 'grabber'));
-        wp_enqueue_style('wp-frabber-fixes');
+        wp_register_style('wp-fixes', plugins_url('/grabber/resources/css/wp-fixes.css', 'grabber'));
+        wp_enqueue_style('wp-fixes');
+
+        wp_register_script('jwplayer', plugins_url('/grabber/resources/js/jwplayer/jwplayer.js', 'grabber'));
+        wp_enqueue_script('jwplayer');
+
+        /*
+        wp_register_style( 'highlight', plugins_url( '/grabber/resources/css/highlight.css', 'grabber' ) );
+        wp_enqueue_style( 'highlight' );
+        wp_register_script( 'highlight', plugins_url( '/grabber/resources/js/highlight.pack.js', 'grabber' ) );
+        wp_enqueue_script( 'highlight' );
+        */
     }
 
     /**
@@ -37,5 +47,4 @@ class Grabber_Controller_Front extends Grabber_Core_Abstract
 
         return $content;
     }
-
 }
