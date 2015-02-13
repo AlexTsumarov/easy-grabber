@@ -2,8 +2,7 @@ defaults:
     grab_list : wiki/WordPress
     grab_threads : 1
     cs_path : https://en.wikipedia.org/
-    wrapper : #content
-    main_wrapper : #main_content
+    main_wrapper : #content
     link_selector : .nav_tabs .selected a
     tabs_selector : .nav_tabs li a
     follow_by_tabs : yes
