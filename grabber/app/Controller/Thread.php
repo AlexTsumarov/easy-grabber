@@ -51,13 +51,13 @@ class Grabber_Controller_Thread extends Grabber_Core_Abstract {
 
 		$this->deatach();
 
-		$page = new Grabber_Parser_Page( $this->conf );
+		$page = new Grabber_Parser_Page();
 
-		$css = new Grabber_Parser_Css( $this->conf );
+		$css = new Grabber_Parser_Css();
 
-		$queue = new Grabber_Model_Queue( $this->conf );
+		$queue = new Grabber_Model_Queue();
 
-		$wpapi = new Grabber_Model_Wpapi( $this->conf );
+		$wpapi = new Grabber_Model_Wpapi();
 
 		while ( $this->url = $queue->getUrlFromQueue( $this->conf->TID ) ) {
 
@@ -324,20 +324,15 @@ class Grabber_Controller_Thread extends Grabber_Core_Abstract {
 		if ( isset( $_GET[ 'path' ] ) )
 			$url = $_GET[ 'path' ];
 
-		$log = '1122';
+		$post	 = new Grabber_Parser_Page( );
+		$css	 = new Grabber_Parser_Css( );
+		$wpapi	 = new Grabber_Model_Wpapi( );
 
-		$c	 = new Grabber_Parser_Css( $this->conf );
-		$p	 = new Grabber_Parser_Page( $this->conf );
+		$data = $post->grab( $url );
+		$css->setData( $data )->generate();
+		$wpapi->save_post( $d );
 
-		$p->page( $url );
-		$d	 = $p->getData();
-		$c->setData( $d );
-		$out = $c->insertCss();
-
-		$wpapi	 = new Grabber_Model_Wpapi( $this->conf );
-		$p		 = $wpapi->save_post( $d );
-
-		echo $log;
+		echo $this->conf->grablog;
 	}
 
 }
