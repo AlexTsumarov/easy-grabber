@@ -1,4 +1,5 @@
-=== GRABBER ===
+=== EASY GRABBER ===
+
 Contributors: AlexTsumarov
 Tags: grabber
 Requires at least: 3.0
