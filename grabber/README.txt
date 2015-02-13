@@ -3,7 +3,7 @@ Contributors: AlexTsumarov
 Tags: grabber
 Requires at least: 3.0
 Tested up to: 3.5.2
-Stable tag: 0.0.2
+Stable tag: 0.0.4
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 Donate link: email://po121@tut.by
