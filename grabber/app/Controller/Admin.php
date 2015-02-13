@@ -49,7 +49,7 @@ class Grabber_Controller_Admin extends Grabber_Core_Abstract {
 			if ( in_array( $setting_name, array( 'add_css_inline', 'rewrite_on_download', 'update_links', 'skip_exist_in_hist', 'attachResources' ) ) ) {
 				//checkboxes
 				add_settings_field( $setting_name, '', array( $this, 'render_checkbox' ), $this->conf->config_slug, 'default', array( 'id' => $setting_name, 'value' => 'yes', 'text' => $label, 's_value' => $setting_value ) );
-			} elseif ( in_array( $setting_name, array( 'grab_list' ) ) ) {
+			} elseif ( in_array( $setting_name, array( 'grab_list', 'drop_with_selectors' ) ) ) {
 				//checkboxes
 				add_settings_field( $setting_name, $label, array( $this, 'render_textarea' ), $this->conf->config_slug, 'default', array( 'id' => $setting_name, 'value' => $setting_value ) );
 			} elseif ( in_array( $setting_name, array( 'insert_cat_into' ) ) ) {

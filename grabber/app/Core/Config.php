@@ -64,6 +64,7 @@ class Grabber_Core_Config {
 		'table_tows'				 => 5,
 		'post_meta_styles'			 => 'post_css',
 		'attachResources'			 => '',
+		'drop_with_selectors'		 => '',
 	);
 
 	/**
@@ -80,6 +81,7 @@ class Grabber_Core_Config {
 		'tabs_selector'			 => 'Grab linked pages by selector',
 		'grab_threads'			 => 'Numbers of grabbing threads, 1..10',
 		'main_wrapper'			 => 'Content selector',
+		'drop_with_selectors'	 => 'Drop elements with selector, <br>separated by newline',
 		'insert_cat_into'		 => 'Category to insert posts',
 		'update_links'			 => 'Update links with WP category',
 		'add_css_inline'		 => 'Insert grabbed css from `Content selector` to post inline',

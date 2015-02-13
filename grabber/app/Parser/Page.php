@@ -200,6 +200,18 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 		if ( !is_object( $content ) ) {
 			throw new Exception( 'Content not found by selector ' . $this->conf->main_wrapper );
 		}
+		
+		if ( $this->conf->drop_with_selectors != '' ) {
+
+			$selectors = explode( "\n", $this->conf->drop_with_selectors );
+			foreach ( $selectors as $selector )
+				if ( !empty( $selector ) )
+					foreach ( $content->find( $selector ) as &$e ) {
+
+						$this->conf->grablog .= "Dropped block - $selector<br>";
+						$e->innertext = '';
+					}
+		}
 
 		// images
 		if ( $this->conf->img_path != '' && $this->conf->img_url != '' ) {
