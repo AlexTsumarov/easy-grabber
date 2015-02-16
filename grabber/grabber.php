@@ -8,7 +8,7 @@
   Author URI: mailto://po121@tut.by
  */
 
-define('GRABBER_VERSION', '0.0.1');
+define('GRABBER_VERSION', '0.0.5');
 define('GRABBER_DIR', plugin_dir_path(__FILE__));
 define('GRABBER_URL', plugin_dir_url(__FILE__));
 add_action('plugins_loaded', 'grabber_init', 0);

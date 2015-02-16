@@ -114,7 +114,7 @@ class Grabber_Controller_Thread extends Grabber_Core_Abstract {
 		
 		foreach ( $links as $row ) {
 
-			if ( isset( $row[ 'link' ] ) && !empty( isset( $row[ 'link' ] ) ) ) {
+			if ( isset( $row[ 'link' ] ) && !empty( $row[ 'link' ] ) ) {
 
 				$urls[] = $row[ 'link' ];
 			}
