@@ -21,5 +21,5 @@ before_script:
   - cd $TRAVIS_BUILD_DIR
   - curl -O http://codeception.com/codecept.phar
 script:
-  - php ./codecept.phar run acceptance
+  - php codecept.phar run acceptance
 after_script:
