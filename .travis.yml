@@ -26,5 +26,5 @@ before_script:
 script:
   - cd $TRAVIS_BUILD_DIR
   - "wget http://codeception.com/codecept.phar"
-  - php ./codecept.phar run acceptance --steps
+  #- php ./codecept.phar run acceptance --steps
 after_script:
