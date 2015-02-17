@@ -19,7 +19,7 @@ before_script:
   - php wp-cli.phar --info
   # tests
   - cd $TRAVIS_BUILD_DIR
-  - wget http://codeception.com/codecept.phar .
+  - curl -O http://codeception.com/codecept.phar
 script:
   - php ./codecept.phar run acceptance
 after_script:
