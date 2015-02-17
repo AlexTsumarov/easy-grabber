@@ -10,16 +10,17 @@ before_install:
   - export WP_CORE_DIR="/tmp/wordpress"
   - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
 before_script:
-   - sudo apt-get install apache2 libapache2-mod-fastcgi
-   # enable php-fpm
-   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-   - sudo a2enmod rewrite actions fastcgi alias
-   - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-   # configure apache virtual hosts
-   - sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
-   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
-   - sudo service apache2 restart
+  # apache install and conf example from http://docs.travis-ci.com/user/languages/php/
+  - sudo apt-get install apache2 libapache2-mod-fastcgi
+  # enable php-fpm
+  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  - sudo a2enmod rewrite actions fastcgi alias
+  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  # configure apache virtual hosts
+  - sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
+  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
+  - sudo service apache2 restart
   # wordpress
   - mkdir $WP_CORE_DIR  
   - cd $WP_CORE_DIR
@@ -29,9 +30,8 @@ before_script:
   - php wp-cli.phar core install --url=http://localhost --title="WP" --admin_user=admin --admin_email=test@example.org --admin_password=test
   - php wp-cli.phar plugin install easy-grabber
   - php wp-cli.phar --info
-  # tests
 script:
   - cd $TRAVIS_BUILD_DIR
   - "wget http://codeception.com/codecept.phar"
-  #- php ./codecept.phar run acceptance --steps
+  - php ./codecept.phar run acceptance --steps
 after_script:
