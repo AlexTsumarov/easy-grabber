@@ -11,14 +11,12 @@ before_install:
 before_script:
   # wordpress
   - curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-  - alias wp="php wp-cli.phar"
   - cd $WP_CORE_DIR
-  - wp --info
-  - wp core download 
-  - wp core config --dbname=wordpress_test --dbuser=root
-  - wp core install --url=http://localhost --title="WP" --admin_user=admin --admin_email=test@example.org --admin_password=test
-  - wp plugin install easy-grabber
-  - wp --info
+  - hp wp-cli.phar core download 
+  - hp wp-cli.phar core config --dbname=wordpress_test --dbuser=root
+  - hp wp-cli.phar core install --url=http://localhost --title="WP" --admin_user=admin --admin_email=test@example.org --admin_password=test
+  - hp wp-cli.phar plugin install easy-grabber
+  - hp wp-cli.phar --info
   # tests
   - cd $TRAVIS_BUILD_DIR
   - wget http://codeception.com/codecept.phar .
