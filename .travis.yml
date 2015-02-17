@@ -6,12 +6,12 @@ env:
 before_install:
   - set -ex
   - export WP_CORE_DIR="/tmp/wordpress"
-  - mkdir $WP_CORE_DIR
   - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
 before_script:
   # wordpress
-  - curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+  - mkdir $WP_CORE_DIR  
   - cd $WP_CORE_DIR
+  - curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar  
   - php wp-cli.phar core download 
   - php wp-cli.phar core config --dbname=wordpress_test --dbuser=root
   - php wp-cli.phar core install --url=http://localhost --title="WP" --admin_user=admin --admin_email=test@example.org --admin_password=test
