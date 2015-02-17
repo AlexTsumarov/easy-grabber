@@ -14,7 +14,7 @@ before_script:
   - alias wp="php wp-cli.phar"
   - cd $WP_CORE_DIR
   - wp --info
-  - wp core download --version=$WP_VERSION
+  - wp core download 
   - wp core config --dbname=wordpress_test --dbuser=root
   - wp core install --url=http://localhost --title="WP" --admin_user=admin --admin_email=test@example.org --admin_password=test
   - wp plugin install easy-grabber
