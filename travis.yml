@@ -1,0 +1,27 @@
+language: php
+php:
+- 5.5
+env:
+  global:
+before_install:
+  - set -ex
+  - export WP_CORE_DIR="/tmp/wordpress"
+  - mkdir $WP_CORE_DIR
+  - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
+before_script:
+  # wordpress
+  - curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+  - alias wp="php wp-cli.phar"
+  - cd $WP_CORE_DIR
+  - wp --info
+  - wp core download --version=$WP_VERSION
+  - wp core config --dbname=wordpress_test --dbuser=root
+  - wp core install --url=http://localhost --title="WP" --admin_user=admin --admin_email=test@example.org --admin_password=test
+  - wp plugin install easy-grabber
+  - wp --info
+  # tests
+  - cd $TRAVIS_BUILD_DIR
+  - wget http://codeception.com/codecept.phar .
+script:
+  - php ./codecept.phar run acceptance
+after_script:
