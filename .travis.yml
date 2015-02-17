@@ -1,4 +1,6 @@
 language: php
+notifications:
+  email: false
 php:
 - 5.5
 env:
