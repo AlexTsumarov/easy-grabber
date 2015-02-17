@@ -55,7 +55,7 @@ function grabber_loader()
 {
     $dir = dirname(__FILE__).DIRECTORY_SEPARATOR;
 
-    require $dir.'app/core/Autoloader.php';
+    require $dir.'app/Core/Autoloader.php';
 
     Grabber_AutoLoader::spl_register($dir);
 }

@@ -1,12 +1,11 @@
 === EASY GRABBER ===
 Contributors: AlexTsumarov
-Tags: grabber
+Tags: grabber, auto poster, auto publisher, autoblog, autoposter, grabber, parser, parser html, plugin, Post, posts
 Requires at least: 3.0
 Tested up to: 3.5.2
-Stable tag: 0.0.5
+Stable tag: 0.0.6
 License: MIT
 License URI: http://opensource.org/licenses/MIT
-Donate link: email://po121@tut.by
 
 A websites grabber for WordPress
 
@@ -28,9 +27,9 @@ Note: multi thread grabbing available only for non FastCGI mode.
 
 == Installation ==
 
-1. Activate the plugin through the 'Plugins' menu in WordPress or by using the link provided by the plugin installer.
-2. It`s better to have Admin->Settings->Permalink->Common Settings->Custom Structure->` %category%/%postname%`
-3. Basically the common css changes are configured for theme `Twenty Fifteen`. You can adopt with you theme at %plugin_dir%/resources/css/wp-fixes.css
+1. Upload `Easy Grabber` grabber folder to the /wp-content/plugins/ directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Set settings in the menu parameters
 
 == Frequently Asked Questions ==
 
@@ -44,23 +43,17 @@ Note: multi thread grabbing available only for non FastCGI mode.
 or
 2. At the posts list page. 
 
+= Advices =
+
+1. It`s better to have Admin->Settings->Permalink->Common Settings->Custom Structure->` %category%/%postname%`
+2. Basically the common css changes are configured for theme `Twenty Fifteen`. You can adopt with you theme at %plugin_dir%/resources/css/wp-fixes.css
+
 == Screenshots ==
 
 1. Plugin config page.
 2. Plugin queue page.
 3. Grabber wiki page in front view.
 
-== Documentation ==
-
 == Changelog ==
 
-= 0.0.5 =
-* First version.
-
 == Upgrade Notice ==
-
-== Arbitrary section ==
-
-== Upgrade Notice ==
-
-No data will be removed while upgrade.
