@@ -20,8 +20,10 @@ before_script:
   - php wp-cli.phar plugin install easy-grabber
   - php wp-cli.phar --info
   # tests
-  - cd $TRAVIS_BUILD_DIR
-  - curl -O http://codeception.com/codecept.phar
 script:
+  - cd $TRAVIS_BUILD_DIR
+  - ls
+  - curl -O http://codeception.com/codecept.phar
+  - ls
   - php codecept.phar run acceptance
 after_script:
