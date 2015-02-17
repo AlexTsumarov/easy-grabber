@@ -1,6 +1,6 @@
 === Grabber plugin for WordPress ===
 
-Acceptance: <img src='https://travis-ci.org/AlexTsumarov/easy-grabber.svg'>
+<img src='https://travis-ci.org/AlexTsumarov/easy-grabber.svg'>
 
 Allows you to grab a World Wide Web site from the Internet to a WordPress posts and categories, 
 recursively creating directories, getting HTML, images, and other files from the server and implements it into your post. 
