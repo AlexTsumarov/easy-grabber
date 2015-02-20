@@ -33,7 +33,7 @@ script:
 - cd $TRAVIS_BUILD_DIR
 - wget http://codeception.com/codecept.phar
 - php ./codecept.phar run acceptance --steps
-- http://plugins.svn.wordpress.org/easy-grabber/trunk/
+- svn checkout http://plugins.svn.wordpress.org/easy-grabber/trunk/
 - cp -fr easy-grabber/* trunk/
 - cd trunk
 - svn add * --force
