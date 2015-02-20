@@ -3,13 +3,15 @@ Contributors: AlexTsumarov
 Tags: grabber, auto poster, auto publisher, autoblog, autoposter, grabber, parser, parser html, plugin, Post, posts
 Requires at least: 3.0
 Tested up to: 3.5.2
-Stable tag: 0.0.6
+Stable tag: 0.0.7
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
 A websites grabber for WordPress
 
 == Description ==
+
+<img src='https://travis-ci.org/AlexTsumarov/easy-grabber.svg'>
 
 Allows you to grab a World Wide Web site from the Internet to a WordPress posts and categories, 
 recursively creating directories, getting HTML, images, and other files from the server and implements it into your post. 
@@ -55,5 +57,7 @@ or
 3. Grabber wiki page in front view.
 
 == Changelog ==
+
+https://github.com/AlexTsumarov/easy-grabber/releases
 
 == Upgrade Notice ==
