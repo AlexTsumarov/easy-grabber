@@ -1,3 +1,4 @@
+#, wp_svn_pass
 language: php
 notifications:
   email: false
@@ -5,30 +6,35 @@ php:
 - 5.5
 env:
   global:
+  - secure: VwxLtZYfd6AvOOQBzpI8fNliyiAMPCgURVzV89f5aGchUXCCdrcT+tYZkkFvltGqXG182MHxoJUkvociYQEpZS8xrPIJ8vzJ6BBDJ/qTFu46Z33c0N+jPqYirz9uDtF3fKugYvZk+OXdkLnMdZ6fNTvlyaXghSQwWu87qCT093o=
+  - secure: foDZ1NbzceIZ75QceP1yWW31TS1y5cycwrfOJZw1S8vcA0F4uBWzWNM488rab8eklFM2LtEnUcSgFw+Uuv1aKilikJkVzI5WEe/scWeVarMRpZ27+TqjKrq9pyFkFkkGr4ssgzvYfKINECmnYaicObeU5J0kAtJS4qUZuzkG+IM=
 before_install:
-  - set -ex
-  - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
+- set -ex
+- mysql -e 'CREATE DATABASE wordpress_test;' -uroot
 before_script:
-  # apache install and conf example from http://docs.travis-ci.com/user/languages/php/
-  - sudo apt-get install apache2 libapache2-mod-fastcgi
-  # enable php-fpm
-  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  - sudo a2enmod rewrite actions fastcgi alias
-  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-  # configure apache virtual hosts
-  - sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
-  - sudo service apache2 restart
-  # wordpress
-  - cd $TRAVIS_BUILD_DIR
-  - "wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
-  - php wp-cli.phar core download 
-  - php wp-cli.phar core config --dbname=wordpress_test --dbuser=root
-  - php wp-cli.phar core install --url=http://localhost --title="WP" --admin_user=admin --admin_email=test@example.org --admin_password=test
-  - php wp-cli.phar plugin install easy-grabber
-  - php wp-cli.phar --info
+- sudo apt-get install apache2 libapache2-mod-fastcgi
+- sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv
+  version-name)/etc/php-fpm.conf
+- sudo a2enmod rewrite actions fastcgi alias
+- echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+- ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+- sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
+- sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
+- sudo service apache2 restart
+- cd $TRAVIS_BUILD_DIR
+- wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+- php wp-cli.phar core download
+- php wp-cli.phar core config --dbname=wordpress_test --dbuser=root
+- php wp-cli.phar core install --url=http://localhost --title="WP" --admin_user=admin
+  --admin_email=test@example.org --admin_password=test
+- php wp-cli.phar plugin install easy-grabber
+- php wp-cli.phar --info
 script:
-  - cd $TRAVIS_BUILD_DIR
-  - "wget http://codeception.com/codecept.phar"
-  - php ./codecept.phar run acceptance --steps
+- cd $TRAVIS_BUILD_DIR
+- wget http://codeception.com/codecept.phar
+- php ./codecept.phar run acceptance --steps
+- http://plugins.svn.wordpress.org/easy-grabber/trunk/
+- cp -fr easy-grabber/* trunk/
+- cd trunk
+- svn add * --force
+- svn commit -m "Auth commit by GitHub ".$TRAVIS_COMMIT --username $wp_svn_user --password $wp_svn_pass

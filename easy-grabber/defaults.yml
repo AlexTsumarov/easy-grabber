@@ -1,0 +1,41 @@
+defaults:
+    grab_list : wiki/WordPress
+    grab_threads : 1
+    cs_path : https://en.wikipedia.org/
+    main_wrapper : #content
+    link_selector : .nav_tabs .selected a
+    tabs_selector : .nav_tabs li a
+    follow_by_tabs : yes
+    grab_resources : yes
+    grab_links : yes
+    import_file_styles :
+    log_table : grabber_log
+    hist_table : grabber_hist
+    queue_table : grabber_queue
+    thread_table : grabber_thread
+    css_path : resources/css/
+    js_path : resources/js/
+    img_path : resources/img/
+    js_url : resources/js/
+    img_url : resources/img/
+    link_url : /uncategorized/%filename%
+    add_css_inline :
+    runner_grad_pause : 1
+    rewrite_on_download :
+    insert_cat_into :
+    update_links :
+    one_url_parse_timeout : 120
+    thread_norespond_timeout : 300
+    skip_exist_in_hist :
+    table_tows : 5
+labels:
+    cs_path : Url of grabbed resource
+    grab_list : Suburls to grab<br>separated by newline
+    tabs_selector : Grab linked pages by selector
+    grab_threads : Numbers of grabbing threads 1..10
+    main_wrapper : Content selector
+    insert_cat_into : Category to insert posts
+    update_links : Update links with WP category
+    add_css_inline : Insert grabbed css from `Content selector` to post inline
+    rewrite_on_download : Force rewrite resources grabbed before
+    skip_exist_in_hist : Skip nested urls what exist in history table
