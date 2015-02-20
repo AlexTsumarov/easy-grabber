@@ -37,4 +37,4 @@ script:
 - cp -fr easy-grabber/* trunk/
 - cd trunk
 - svn add * --force
-- svn commit -m "Auto update from GitHub by Travis with commit #".$TRAVIS_COMMIT --username $wp_svn_user --password $wp_svn_pass
+- svn commit -m "Auto update from GitHub by Travis with commit #$TRAVIS_COMMIT" --no-auth-cache --username $wp_svn_user --password $wp_svn_pass
