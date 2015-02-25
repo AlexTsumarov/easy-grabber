@@ -53,10 +53,15 @@ class Grabber_Model_Wpapi extends Grabber_Core_Abstract
         $post[ 'post_category' ] = array( $cID );
         $post[ 'post_content' ]     = $this->item[ 'content' ];
 
-        // insert post inine if post meta key are not set
         if ($this->conf->post_meta_styles == '' && $this->conf->add_css_inline == 'yes') {
-            $post[ 'post_content' ] .= "<style id='post_css'>\n{$this->item[ 'composed_css' ]}</style>";
+            
+			$post[ 'post_content' ] .= "<style id='post_css'>\n{$this->item[ 'composed_css' ]}</style>";
         }
+		
+		if ( $this->conf->add_js_inline == 'yes' ) {
+			
+			$post[ 'post_content' ] .= "<script id='post_js' type='text/javascript'>{$this->item[ 'inline-javascript' ]}</style>";
+		}
 
         if (isset($post[ 'ID' ])) {
             $result = wp_update_post($post, true);

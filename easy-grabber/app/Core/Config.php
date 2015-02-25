@@ -66,6 +66,7 @@ class Grabber_Core_Config {
 		'post_meta_styles'			 => 'post_css',
 		'attachResources'			 => '',
 		'drop_with_selectors'		 => '',
+		'add_js_inline'		 => '',
 	);
 
 	/**
@@ -73,22 +74,25 @@ class Grabber_Core_Config {
 	 *
 	 * All label from this array will be rendered by Grabber_Controller_Admin->admin_init().
 	 * In depends of id it will be input, textaream checkbox or select box.
+	 * Also this array are determine an order of elements appearence on admin config page
 	 *
 	 * @var array
 	 */
 	public static $labels = array(
-		'cs_path'				 => 'Url of grabbed resource',
-		'grab_list'				 => 'Suburls to grab,<br>separated by newline',
-		'tabs_selector'			 => 'Grab linked pages by selector',
-		'grab_threads'			 => 'Numbers of grabbing threads, 1..10',
-		'main_wrapper'			 => 'Content selector',
-		'drop_with_selectors'	 => 'Drop elements with selector, <br>separated by newline',
-		'insert_cat_into'		 => 'Category to insert posts',
-		'update_links'			 => 'Update links with WP category',
-		'add_css_inline'		 => 'Insert grabbed css from `Content selector` to post inline',
-		'rewrite_on_download'	 => 'Force rewrite resources grabbed before',
-		'skip_exist_in_hist'	 => 'Skip nested urls what exist in history table',
-		'attachResources'		 => 'Link all founded css and javascript files to post',
+		'grab_threads'			 => '',
+		'cs_path'				 => '',
+		'grab_list'				 => '',
+		'tabs_selector'			 => '',
+		'main_wrapper'			 => '',
+		'drop_with_selectors'	 => '',
+		'insert_cat_into'		 => '',
+		'update_links'			 => '',
+		'add_css_inline'		 => '',
+		'add_js_inline'			 => '',
+		'attachResources'		 => '',
+		'skip_exist_in_hist'	 => '',
+		'attachResources'		 => '',
+		'rewrite_on_download'	 => '',
 	);
 
 	public static function singletoneInstance() {
@@ -130,7 +134,7 @@ class Grabber_Core_Config {
 	 * @return string
 	 */
 	public function __set( $k, $v ) {
-		
+
 		$this->config[ $k ] = $v;
 
 		return $this->config[ $k ];
@@ -151,8 +155,8 @@ class Grabber_Core_Config {
 			$file_data = spyc_load_file( GRABBER_DIR . self::config_default );
 
 			if ( isset( $file_data[ 'labels' ] ) && is_array( $file_data[ 'labels' ] ) ) {
-				foreach( $file_data[ 'labels' ] as $k => $v )
-					Grabber_Core_Config::$labels[$k] = $v;
+				foreach ( $file_data[ 'labels' ] as $k => $v )
+					Grabber_Core_Config::$labels[ $k ] = $v;
 			}
 
 			if ( isset( $file_data[ 'defaults' ] ) && is_array( $file_data[ 'defaults' ] ) ) {

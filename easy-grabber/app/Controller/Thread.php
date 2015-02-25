@@ -171,14 +171,17 @@ class Grabber_Controller_Thread extends Grabber_Core_Abstract {
 	private function deatach() {
 
 		ignore_user_abort();
-		ob_end_clean();
+		
+		if (ob_get_contents())
+			ob_end_clean();
+		
 		ob_start();
 		echo $this->conf->TID;
 		header( "Connection: close" );
 		header( "Content-Length: " . ob_get_length() );
 		ob_end_flush();
 		flush();
-
+		
 		if ( isset( $_GET[ 'delay' ] ) && $_GET[ 'delay' ] > 0 ) {
 
 			$this->updateThread( 'Wait for starting delay ' . $_GET[ 'delay' ] . ' sec' );

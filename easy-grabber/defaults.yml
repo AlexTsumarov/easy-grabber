@@ -20,22 +20,25 @@ defaults:
     img_url : resources/img/
     link_url : /uncategorized/%filename%
     add_css_inline :
-    runner_grad_pause : 1
+    runner_grad_pause : 10
     rewrite_on_download :
     insert_cat_into :
     update_links :
     one_url_parse_timeout : 120
     thread_norespond_timeout : 300
     skip_exist_in_hist :
-    table_tows : 5
+    table_tows : 10
 labels:
-    cs_path : Url of grabbed resource
-    grab_list : Suburls to grab<br>separated by newline
-    tabs_selector : Grab linked pages by selector
-    grab_threads : Numbers of grabbing threads 1..10
-    main_wrapper : Content selector
-    insert_cat_into : Category to insert posts
-    update_links : Update links with WP category
-    add_css_inline : Insert grabbed css from `Content selector` to post inline
-    rewrite_on_download : Force rewrite resources grabbed before
-    skip_exist_in_hist : Skip nested urls what exist in history table
+    cs_path : Website hostname (source)
+    grab_list : Set paths to grab
+    tabs_selector : Add linked pages to queue
+    grab_threads : Set number of threads, 1..10
+    main_wrapper : Select content block
+    insert_cat_into : Select base category
+    update_links : Add slug of selected category to post url as prefix
+    add_css_inline : Add grabbed css from `Content selector` to post inline
+    add_js_inline : Add grabbed JavaScript out from `Content selector` to post inline
+    rewrite_on_download : Set option force rewrite resources
+    skip_exist_in_hist : Do not add nested urls what parsed while previous run
+    drop_with_selectors: Drop elements with selector
+    attachResources: Add a link for grabbed css and javascript files to post

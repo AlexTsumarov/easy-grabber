@@ -1,5 +1,7 @@
 === Grabber plugin for WordPress ===
 
+[![License](https://poser.pugx.org/leaphly/cart-bundle/license.svg)](https://packagist.org/packages/leaphly/cart-bundle)
+
 <img src='https://travis-ci.org/AlexTsumarov/easy-grabber.svg'>
 
 Allows you to grab a World Wide Web site from the Internet to a WordPress posts and categories, 

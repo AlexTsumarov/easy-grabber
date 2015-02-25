@@ -21,17 +21,18 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 		$this->conf->grablog = '';
 
 		$this->parsed = array(
-			'suburl'		 => $url,
-			'title'			 => null,
-			'fullurl'		 => null,
-			'wpurl'			 => null,
-			'linked-pages'	 => array(),
-			'styles'		 => array(),
-			'img'			 => array(),
-			'files-css'		 => array(),
-			'files-js'		 => array(),
-			'selectors'		 => array(),
-			'composed_css'	 => '',
+			'suburl'			 => $url,
+			'title'				 => null,
+			'fullurl'			 => null,
+			'wpurl'				 => null,
+			'linked-pages'		 => array(),
+			'styles'			 => array(),
+			'img'				 => array(),
+			'files-css'			 => array(),
+			'files-js'			 => array(),
+			'selectors'			 => array(),
+			'composed_css'		 => '',
+			'inline-javascript'	 => '',
 		);
 
 		$url = trim( $this->conf->cs_path . $url );
@@ -46,9 +47,17 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 			throw new Exception( 'Page can`t be parsed: ' . $content );
 		}
 
-		$this->parsed[ 'title' ]	 = is_array( $this->html->find( 'title' ) ) ? trim( $this->html->find( 'title', 0 )->innertext ) : 'title?';
-		$this->parsed[ 'fullurl' ]	 = $url;
-		$this->parsed[ 'wpurl' ]	 = sanitize_title_with_dashes( basename( $url ) );
+		if ( is_object( $this->html->find( 'title', 0 ) ) ) {
+
+			$this->parsed[ 'title' ] = trim( $this->html->find( 'title', 0 )->innertext );
+		} else {
+
+			$this->parsed[ 'title' ] = '';
+		}
+
+		$this->parsed[ 'fullurl' ] = $url;
+
+		$this->parsed[ 'wpurl' ] = sanitize_title_with_dashes( basename( $url ) );
 
 		// Get urls what have to be grabbed too
 		if ( $this->conf->tabs_selector != '' ) {
@@ -123,7 +132,7 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 		}
 
 		foreach ( $this->parsed[ 'files-css' ] as &$link ) {
-			
+
 			if ( strpos( $link, '?' ) ) {
 				$link = substr( $link, 0, strpos( $link, '?' ) );
 			}
@@ -134,13 +143,13 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 
 			if ( !file_exists( $dst ) || $this->conf->rewrite_on_download == 'yes' ) {
 				if ( $this->check_url( $src ) ) {
-					
+
 					$this->forceFilePutContents( $dst, file_get_contents( $src ) );
 				}
 
 				$this->conf->grablog .= $link . ' saved<br>';
 			}
-			
+
 			$link = $this->conf->css_url . ltrim( $link, '/' );
 		};
 
@@ -162,7 +171,7 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 		}
 
 		foreach ( $this->parsed[ 'files-js' ] as &$link ) {
-			
+
 			if ( strpos( $link, '?' ) ) {
 				$link = substr( $link, 0, strpos( $link, '?' ) );
 			}
@@ -173,13 +182,13 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 
 			if ( (!file_exists( $dst ) || $this->conf->rewrite_on_download == 'yes') && file_exists( $src ) ) {
 				if ( $this->check_url( $src ) ) {
-					
+
 					$this->forceFilePutContents( $dst, file_get_contents( $src ) );
 				}
 
 				$this->conf->grablog .= $link . ' saved<br>';
 			}
-			
+
 			$link = $this->conf->js_url . ltrim( $link, '/' );
 		};
 
@@ -200,7 +209,7 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 		if ( !is_object( $content ) ) {
 			throw new Exception( 'Content not found by selector ' . $this->conf->main_wrapper );
 		}
-		
+
 		if ( $this->conf->drop_with_selectors != '' ) {
 
 			$selectors = explode( "\n", $this->conf->drop_with_selectors );
@@ -271,6 +280,31 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 			}
 
 			$this->parsed[ 'content' ] = str_replace( $src, $this->conf->img_url . $file, $this->parsed[ 'content' ] );
+		}
+
+		// find all javascript
+		if ( $this->conf->add_js_inline == 'yes' ) {
+
+			$pattern		 = '/<script[^>]*>(?P<script>.*)<\/script>/i';
+			$content		 = $this->html->find( $this->conf->main_wrapper, 0 );
+			$out_of_content	 = str_replace( $content, '', $this->html->innertext );
+			preg_match_all( $pattern, $out_of_content, $founded, PREG_SET_ORDER );
+			foreach ( $founded as $found ) {
+
+				if ( !isset( $found[ 'script' ] ) )
+					continue;
+
+				$script = trim( $found[ 'script' ] );
+
+				if ( empty( $script ) )
+					continue;
+
+				$script = preg_replace( '#<script(.*?)>(.*?)</script>#is', '$2', $script );
+
+				$script = str_replace( '</script>', '', $script );
+
+				$this->parsed[ 'inline-javascript' ] .= $script;
+			}
 		}
 
 		return $this;
@@ -348,19 +382,19 @@ class Grabber_Parser_Page extends Grabber_Parser_Abstract {
 
 		if ( $this->conf->attachResources == '' )
 			return $this;
-		
+
 		$attached = '';
-		
+
 		foreach ( $this->parsed[ 'files-js' ] as $src ) {
-			
+
 			$attached .= "";
 		}
 
 		foreach ( $this->parsed[ 'files-css' ] as $src ) {
-			
-			$attached .= "<link rel='stylesheet' type='text/css' href='".$src."' />\n";
+
+			$attached .= "<link rel='stylesheet' type='text/css' href='" . $src . "' />\n";
 		}
-		
+
 		$this->parsed[ 'content' ] = $attached . $this->parsed[ 'content' ];
 
 		return $this;
