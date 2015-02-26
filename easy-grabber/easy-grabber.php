@@ -3,12 +3,12 @@
 /*
   Plugin Name: Import by URL
   Description: Grab static pages and insert as WP post. Supports: multi thread, grab css/JavaScript/image files, creation of new posts and categories.
-  Version: 0.0.15
+  Version: 0.0.16
   Author: Alex Ts
   Author URI: https://github.com/AlexTsumarov/
  */
 
-define('GRABBER_VERSION', '0.0.15');
+define('GRABBER_VERSION', '0.0.16');
 define('GRABBER_DIR', plugin_dir_path(__FILE__));
 define('GRABBER_URL', plugin_dir_url(__FILE__));
 add_action('plugins_loaded', 'grabber_init', 0);

@@ -3,7 +3,7 @@ Contributors: AlexTsumarov
 Tags: import, grabber, auto poster, auto publisher, autoblog, autoposter, grabber, parser, parser html, plugin, Post, posts, url
 Requires at least: 3.0
 Tested up to: 4.0.0
-Stable tag: 0.0.15
+Stable tag: 0.0.16
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
@@ -29,9 +29,9 @@ Note: multi thread grabbing available only for non FastCGI mode.
 
 == Installation ==
 
-1. Upload `Easy Grabber` grabber folder to the /wp-content/plugins/ directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Set settings in the menu parameters
+1. Install plugin by WP Plugin Manager. Or download and copy to plugins folder.
+2. Activate the plugin.
+3. Set settings in the menu parameters. At least you have to set desired source `Website hostname (source)`.
 
 == Frequently Asked Questions ==
 
