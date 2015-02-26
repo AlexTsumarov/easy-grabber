@@ -1,6 +1,6 @@
 === Import by URL ===
 Contributors: AlexTsumarov
-Tags: import, grabber, auto poster, auto publisher, autoblog, autoposter, grabber, parser, parser html, plugin, Post, posts
+Tags: import, grabber, auto poster, auto publisher, autoblog, autoposter, grabber, parser, parser html, plugin, Post, posts, url
 Requires at least: 3.0
 Tested up to: 4.0.0
 Stable tag: 0.0.15
