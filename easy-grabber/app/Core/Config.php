@@ -208,7 +208,13 @@ class Grabber_Core_Config {
 					}
 				}
 				$arg				 = array_unique( $array );
-				$this->config[ $k ]	 = implode( "\n", $arg );
+				if( sizeof( $arg ) > 0 ){
+					
+					$this->config[ $k ]	 = implode( "\n", $arg );
+				}else{
+					
+					$this->config[ $k 	] = "/";
+				}
 				break;
 		}
 	}

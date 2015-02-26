@@ -7,6 +7,8 @@
  */
 class Grabber_Controller_Admin extends Grabber_Core_Abstract {
 
+	private $errors = array();
+
 	/**
 	 * Constructor for class Grabber_Controller_Admin.
 	 *
@@ -39,6 +41,19 @@ class Grabber_Controller_Admin extends Grabber_Core_Abstract {
 	 * @return void
 	 */
 	public function admin_init() {
+
+		if (! function_exists( 'curl_init' ) ) {
+
+			$this->errors[] = 'The php module CURL are required this plugin work.';
+			add_action( 'admin_notices', array( $this, 'render_warning' ) );
+		}
+
+		if (! ini_get( "allow_url_fopen" ) ) {
+
+			$this->errors[] = 'The php.ini setting `allow_url_fopen` have to be set as `yes`.';
+			add_action( 'admin_notices', array( $this, 'render_warning' ) );
+		}
+
 		register_setting( Grabber_Core_Config::config_path, Grabber_Core_Config::config_path );
 		register_setting( Grabber_Core_Config::run_path, Grabber_Core_Config::run_path );
 		add_settings_section( 'default', null, null, $this->conf->config_slug );
@@ -46,7 +61,7 @@ class Grabber_Controller_Admin extends Grabber_Core_Abstract {
 		foreach ( Grabber_Core_Config::$labels as $setting_name => $label ) {
 			$setting_value = $this->conf->$setting_name;
 
-			if ( in_array( $setting_name, array( 'add_css_inline', 'rewrite_on_download', 'update_links', 'skip_exist_in_hist', 'attachResources' ) ) ) {
+			if ( in_array( $setting_name, array( 'add_css_inline', 'add_js_inline', 'rewrite_on_download', 'update_links', 'skip_exist_in_hist', 'attachResources' ) ) ) {
 				//checkboxes
 				add_settings_field( $setting_name, '', array( $this, 'render_checkbox' ), $this->conf->config_slug, 'default', array( 'id' => $setting_name, 'value' => 'yes', 'text' => $label, 's_value' => $setting_value ) );
 			} elseif ( in_array( $setting_name, array( 'grab_list', 'drop_with_selectors' ) ) ) {
@@ -95,185 +110,189 @@ class Grabber_Controller_Admin extends Grabber_Core_Abstract {
 
 				<div class="metabox-holder">
 					<div class="postbox-container" style="width: 99%;">
-		<?php
-		add_meta_box( Grabber_Core_Config::config_path, __( 'Config', Grabber_Core_Config::config_path ), array( $this, 'do_settings_box' ), $this->conf->config_slug, 'main' );
-		settings_fields( Grabber_Core_Config::config_path );
-		do_meta_boxes( $this->conf->config_slug, 'main', null );
-		?>
+						<?php
+						add_meta_box( Grabber_Core_Config::config_path, __( 'Config', Grabber_Core_Config::config_path ), array( $this, 'do_settings_box' ), $this->conf->config_slug, 'main' );
+						settings_fields( Grabber_Core_Config::config_path );
+						do_meta_boxes( $this->conf->config_slug, 'main', null );
+						?>
 					</div>
 				</div>
 
 				<p>
 					<input type="submit" class="button button-primary" name="save_options" value="<?php esc_attr_e( 'Save' );
-		?>" />
-				</p>
-			</form>
-		</div>
-
-						   <?php
-					   }
-
-					   /**
-						* Render a page with queue, threads, log and history grids.
-						*
-						* @return string
-						*/
-					   public function render_run_page() {
-						   $thread_model	 = new Grabber_Model_Thread( $this->conf );
-						   $queue_model	 = new Grabber_Model_Queue( $this->conf );
-						   $log_model		 = new Grabber_Model_Log( $this->conf );
-						   $threads		 = $thread_model->getThread();
-						   $queue			 = $queue_model->getQueue();
-						   $logs			 = $log_model->getLog();
-						   $hist			 = $log_model->getHistory();
-						   ?>
-		<div class="wrap">
-
-			<form method="post" action="?page=grabber_threads">
-
-				<p>
-					<input type="submit" class="button button-primary" name="start" value="<?php esc_attr_e( 'Start' );
-						   ?>" />
-		<?php if ( $queue_model->count() > 0 && $thread_model->isAllDead() ) {
-			?>
-						<input type="submit" class="button button-primary" name="continue" value="<?php esc_attr_e( 'Continue' );
-			?>" />
-			<?php
-		}
-		?>
-				</p>
-
-				<div class="metabox-holder">
-					<div class="postbox-container" style="width: 99%;">
-						   <?php
-						   do_meta_boxes( $this->conf->run_slug, 'main', null );
-						   settings_fields( Grabber_Core_Config::run_path );
-
-						   echo "<h3 style='margin-bottom: -20px;'>Threads" . Grabber_Helper_Common::count( $threads ) . "</h3>";
-						   $testListTable = new Grabber_Helper_Table( $threads, $this->conf );
-						   $testListTable->prepare_items();
-						   $testListTable->display();
-
-						   echo "<h3 style='margin-bottom: -20px;'>Queue wait" . Grabber_Helper_Common::count( $queue ) . "</h3>";
-						   $testListTable = new Grabber_Helper_Table( $queue, $this->conf );
-						   $testListTable->prepare_items();
-						   $testListTable->display();
-
-						   echo "<h3 style='margin-bottom: -20px;'>Queue done" . Grabber_Helper_Common::count( $logs ) . "</h3>";
-						   $testListTable = new Grabber_Helper_Table( $logs, $this->conf );
-						   $testListTable->prepare_items();
-						   $testListTable->display();
-
-						   echo "<h3 style='margin-bottom: -20px;'>History" . Grabber_Helper_Common::count( $hist ) . "</h3>";
-						   $testListTable = new Grabber_Helper_Table( $hist, $this->conf );
-						   $testListTable->prepare_items();
-						   $testListTable->display();
-
-						   if ( Grabber_Helper_Common::count( $threads ) ) {
-							   Grabber_Helper_Common::refreshEvery( 20 );
-						   }
-						   ?>
-					</div>
-				</div>
-
-			</form>
-		</div>
-
-						<?php
-					}
-
-					/**
-					 * Render a page which will run threads and redirect after to queue page.
-					 *
-					 * @return string
-					 */
-					public function render_runner_page() {
-						?>
-		<div class="wrap">
-			<h2><?php echo esc_html( 'Wait while a grabbing threads will be generated' );
-						?></h2>
-
-			<form method="post" action="?page=grabber_threads">
-
-				<div class="metabox-holder">
-					<div class="postbox-container" style="width: 99%;">
-		<?php
-		if ( isset( $_POST[ 'start' ] ) ) {
-			$log	 = new Grabber_Model_Log( $this->conf );
-			$queue	 = new Grabber_Model_Queue( $this->conf );
-			$log->truncateLog();
-			$queue->truncateQueue()->fillQueue();
-		}
-
-		$runner = new Grabber_Helper_Runner( $this->conf );
-		$runner->terminateParserThreads()->runParserTreads()->redirect();
-		?>
-					</div>
-				</div>
-			</form>
-		</div>
-
-						<?php
-					}
-
-					/**
-					 * Prints out settings sections added to a settings page
-					 *
-					 * @return string
-					 */
-					public function do_settings_box() {
-						do_settings_sections( $this->conf->config_slug );
-					}
-
-					/**
-					 * Render the input
-					 *
-					 * @param array $args array with name and value
-					 *
-					 * @return string
-					 */
-					public function render_input( $args ) {
-						$id = Grabber_Core_Config::config_path . '[' . $args[ 'id' ] . ']';
-						?>
-		<input id="<?php echo $id;
-						?>" style="width:50%;"  type="text" name="<?php echo $id;
-						?>" value="<?php echo $args[ 'value' ];
 						?>" />
+				</p>
+			</form>
+		</div>
+
 		<?php
 	}
 
 	/**
-	 * Render the checkbox
+	 * Render a page with queue, threads, log and history grids.
+	 *
+	 * @return string
+	 */
+	public function render_run_page() {
+		$thread_model	 = new Grabber_Model_Thread( $this->conf );
+		$queue_model	 = new Grabber_Model_Queue( $this->conf );
+		$log_model		 = new Grabber_Model_Log( $this->conf );
+		$threads		 = $thread_model->getThread();
+		$queue			 = $queue_model->getQueue();
+		$logs			 = $log_model->getLog();
+		$hist			 = $log_model->getHistory();
+		?>
+		<div class="wrap">
+
+			<form method="post" action="?page=grabber_threads">
+						
+							<p>
+								<input type="submit" class="button button-primary" name="start" value="<?php esc_attr_e( 'Start' );
+							?>" 
+									<?php if ( sizeof( $this->errors ) > 0 ) echo 'disabled title="Fix errors to activate this button."'; ?>
+									/>
+									<?php if ( $queue_model->count() > 0 && $thread_model->isAllDead() ) {
+										?>
+											<input type="submit" class="button button-primary" name="continue" value="<?php esc_attr_e( 'Continue' );
+										?>" 
+												   <?php if ( sizeof( $this->errors ) > 0 ) echo 'disabled title="Fix errors to activate this button."'; ?>
+												   />
+											<?php
+										};
+										?>
+				</p>
+
+				<div class="metabox-holder">
+					<div class="postbox-container" style="width: 99%;">
+						<?php
+						do_meta_boxes( $this->conf->run_slug, 'main', null );
+						settings_fields( Grabber_Core_Config::run_path );
+
+						echo "<h3 style='margin-bottom: -20px;'>Threads" . Grabber_Helper_Common::count( $threads ) . "</h3>";
+						$testListTable = new Grabber_Helper_Table( $threads, $this->conf );
+						$testListTable->prepare_items();
+						$testListTable->display();
+
+						echo "<h3 style='margin-bottom: -20px;'>Queue wait" . Grabber_Helper_Common::count( $queue ) . "</h3>";
+						$testListTable = new Grabber_Helper_Table( $queue, $this->conf );
+						$testListTable->prepare_items();
+						$testListTable->display();
+
+						echo "<h3 style='margin-bottom: -20px;'>Queue done" . Grabber_Helper_Common::count( $logs ) . "</h3>";
+						$testListTable = new Grabber_Helper_Table( $logs, $this->conf );
+						$testListTable->prepare_items();
+						$testListTable->display();
+
+						echo "<h3 style='margin-bottom: -20px;'>History" . Grabber_Helper_Common::count( $hist ) . "</h3>";
+						$testListTable = new Grabber_Helper_Table( $hist, $this->conf );
+						$testListTable->prepare_items();
+						$testListTable->display();
+
+						if ( Grabber_Helper_Common::count( $threads ) ) {
+							Grabber_Helper_Common::refreshEvery( 20 );
+						}
+						?>
+					</div>
+				</div>
+
+			</form>
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Render a page which will run threads and redirect after to queue page.
+	 *
+	 * @return string
+	 */
+	public function render_runner_page() {
+		?>
+		<div class="wrap">
+			<h2><?php echo esc_html( 'Wait while a grabbing threads will be generated' );
+		?></h2>
+
+			<form method="post" action="?page=grabber_threads">
+
+				<div class="metabox-holder">
+					<div class="postbox-container" style="width: 99%;">
+						<?php
+						if ( isset( $_POST[ 'start' ] ) ) {
+							$log	 = new Grabber_Model_Log( $this->conf );
+							$queue	 = new Grabber_Model_Queue( $this->conf );
+							$log->truncateLog();
+							$queue->truncateQueue()->fillQueue();
+						}
+
+						$runner = new Grabber_Helper_Runner( $this->conf );
+						$runner->terminateParserThreads()->runParserTreads()->redirect();
+						?>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Prints out settings sections added to a settings page
+	 *
+	 * @return string
+	 */
+	public function do_settings_box() {
+		do_settings_sections( $this->conf->config_slug );
+	}
+
+	/**
+	 * Render the input
 	 *
 	 * @param array $args array with name and value
 	 *
 	 * @return string
 	 */
-	public function render_checkbox( $args ) {
-		$id		 = Grabber_Core_Config::config_path . '[' . $args[ 'id' ] . ']';
-		$checked = ($args[ 's_value' ] == 'yes') ? 'checked' : '';
+	public function render_input( $args ) {
+		$id = Grabber_Core_Config::config_path . '[' . $args[ 'id' ] . ']';
 		?>
-		<input name="<?php echo $id;
-		?>" type="checkbox" value="<?php echo $args[ 'value' ];
-		?>" <?php echo $checked;
-		?> /> <?php echo " {$args[ 'text' ]}";
-		?> <br/>
+		<input id="<?php echo $id;
+		?>" style="width:50%;"  type="text" name="<?php echo $id;
+		?>" value="<?php echo $args[ 'value' ];
+		?>" />
 			   <?php
 		   }
 
 		   /**
-			* Render the textarea
+			* Render the checkbox
 			*
 			* @param array $args array with name and value
 			*
 			* @return string
 			*/
-		   public function render_textarea( $args ) {
-			   $id = Grabber_Core_Config::config_path . '[' . $args[ 'id' ] . ']';
+		   public function render_checkbox( $args ) {
+			   $id		 = Grabber_Core_Config::config_path . '[' . $args[ 'id' ] . ']';
+			   $checked = ($args[ 's_value' ] == 'yes') ? 'checked' : '';
 			   ?>
+		<input name="<?php echo $id;
+			   ?>" type="checkbox" value="<?php echo $args[ 'value' ];
+			   ?>" <?php echo $checked;
+			   ?> /> <?php echo " {$args[ 'text' ]}";
+			   ?> <br/>
+		<?php
+	}
+
+	/**
+	 * Render the textarea
+	 *
+	 * @param array $args array with name and value
+	 *
+	 * @return string
+	 */
+	public function render_textarea( $args ) {
+		$id = Grabber_Core_Config::config_path . '[' . $args[ 'id' ] . ']';
+		?>
 		<textarea style="width:50%; height: 100px;" name="<?php echo $id;
-			   ?>"><?php echo $args[ 'value' ];
-			   ?></textarea><br/>
+		?>"><?php echo $args[ 'value' ];
+		?></textarea><br/>
 		<?php
 	}
 
@@ -317,6 +336,24 @@ class Grabber_Controller_Admin extends Grabber_Core_Abstract {
 
 		//echo "<script> hljs.initHighlightingOnLoad(); </script>";
 		//<pre><code class='css'>".str_replace( "}", "}\n", $content )."</code></pre>
+	}
+
+	/**
+	 * Callback function of add_action( 'admin_notices' )
+	 *
+	 * @param string $msg
+	 *
+	 * @return void
+	 */
+	function render_warning( $msg ) {
+
+		if ( sizeof( $this->errors ) == 0 )
+			return;
+
+		foreach ( $this->errors as $msg )
+			if ( !empty( $msg ) )
+				
+				?><div class="error"><p><?php _e( $msg, 'easy-grabber' ); ?></p></div><?php
 	}
 
 }
