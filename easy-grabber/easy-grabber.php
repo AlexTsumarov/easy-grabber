@@ -1,11 +1,11 @@
 <?php
 
 /*
-  Plugin Name: Easy Grabber
+  Plugin Name: Import by URL
   Description: Grab static pages and insert as WP post. Supports: multi thread, grab css/JavaScript/image files, creation of new posts and categories.
   Version: 0.0.14
   Author: Alex Ts
-  Author URI: mailto://po121@tut.by
+  Author URI: https://github.com/AlexTsumarov/
  */
 
 define('GRABBER_VERSION', '0.0.14');
