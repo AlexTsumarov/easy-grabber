@@ -1,222 +1,131 @@
 <?php
 
 /**
- * Config helper to get and set config and request data.
+ * Common helper.
  *
  * @package Grabber
  */
-class Grabber_Core_Config {
+class Grabber_Helper_Common {
 
 	/**
-	 * Contains default plugin config
+	 * Count body rows of the table.
 	 *
-	 * @var string
+	 * @param link $table Link to table array
+	 *
+	 * @return int
 	 */
-	const config_default = 'defaults.yml';
+	public function count( &$table ) {
+		$count = isset( $table[ 'body' ] ) ? ' (' . sizeof( $table[ 'body' ] ) . ')' : '';
 
-	/**
-	 * Contains id in WP get_settings storage.
-	 *
-	 * @var string
-	 */
-	const config_path = 'grabber_settings';
-
-	/**
-	 * Contains id of WP register_setting.
-	 *
-	 * @var string
-	 */
-	const run_path = 'grabber_run';
-
-	/**
-	 * Contains config data of current request.
-	 *
-	 * @var array
-	 */
-	private $config = null;
-
-	/**
-	 * Contains config instance
-	 *
-	 * @var array
-	 */
-	private static $_instance = null;
-
-	/**
-	 * Contains defaults data of plugin.
-	 *
-	 * @var array
-	 */
-	private $defaults = array(
-		'grab_threads'				 => 1,
-		'log_table'					 => 'grabber_log',
-		'hist_table'				 => 'grabber_hist',
-		'queue_table'				 => 'grabber_queue',
-		'thread_table'				 => 'grabber_thread',
-		'css_path'					 => 'resources/css/',
-		'css_url'					 => 'resources/css/',
-		'js_path'					 => 'resources/js/',
-		'img_path'					 => 'resources/img/',
-		'js_url'					 => 'resources/js/',
-		'img_url'					 => 'resources/img/',
-		'runner_grad_pause'			 => 1,
-		'one_url_parse_timeout'		 => 120,
-		'thread_norespond_timeout'	 => 300,
-		'table_tows'				 => 5,
-		'post_meta_styles'			 => 'post_css',
-		'attachResources'			 => '',
-		'drop_with_selectors'		 => '',
-		'add_js_inline'		 => '',
-	);
-
-	/**
-	 * Contains labels for settings page.
-	 *
-	 * All label from this array will be rendered by Grabber_Controller_Admin->admin_init().
-	 * In depends of id it will be input, textaream checkbox or select box.
-	 * Also this array are determine an order of elements appearence on admin config page
-	 *
-	 * @var array
-	 */
-	public static $labels = array(
-		'grab_threads'			 => '',
-		'cs_path'				 => '',
-		'grab_list'				 => '',
-		'tabs_selector'			 => '',
-		'main_wrapper'			 => '',
-		'drop_with_selectors'	 => '',
-		'insert_cat_into'		 => '',
-		'update_links'			 => '',
-		'add_css_inline'		 => '',
-		'add_js_inline'			 => '',
-		'attachResources'		 => '',
-		'skip_exist_in_hist'	 => '',
-		'attachResources'		 => '',
-		'rewrite_on_download'	 => '',
-	);
-
-	public static function singletoneInstance() {
-		if ( !self::$_instance ) {
-			self::$_instance = new Grabber_Core_Config();
-		}
-
-		return self::$_instance;
+		return $count;
 	}
 
 	/**
-	 * Getter for config.
+	 * Page reload after $sec seconds.
 	 *
-	 * @param string $k key of config.
+	 * @param int $sec Number of seconds.
 	 *
-	 * @return mixed
+	 * @return Grabber_Helper_Common
 	 */
-	public function __get( $k ) {
-
-		if ( !isset( $this->config[ $k ] ) && isset( $this->defaults[ $k ] ) ) {
-			$this->config[ $k ] = $this->defaults[ $k ];
+	public function refreshEvery( $sec = 1 ) {
+		if ( $sec < 1 ) {
+			return $this;
 		}
 
-		$this->sanitize( $k );
+		echo "<script>
+			setInterval( function () { window.location.href=window.location.href; }, " . $sec * 1000 . ");
+				</script>";
 
-		if ( !isset( $this->config[ $k ] ) ) {
-			return;
-		}
-
-		return $this->config[ $k ];
+		return $this;
 	}
 
 	/**
-	 * Setter for config.
+	 * Determines if a command exists on the current environment
 	 *
-	 * @param string $k key of config.
-	 * @param string $v value of config.
-	 *
-	 * @return string
+	 * @param string $command The command to check
+	 * @return bool True if the command has been found ; otherwise, false.
 	 */
-	public function __set( $k, $v ) {
+	public static function commandExists( $command ) {
 
-		$this->config[ $k ] = $v;
+		$whereIsCommand = (PHP_OS == 'WINNT') ? 'where' : 'which';
 
-		return $this->config[ $k ];
+		$process = proc_open(
+		"$whereIsCommand $command", array(
+			0	 => array( "pipe", "r" ), //STDIN
+			1	 => array( "pipe", "w" ), //STDOUT
+			2	 => array( "pipe", "w" ), //STDERR
+		), $pipes
+		);
+		if ( $process !== false ) {
+			$stdout	 = stream_get_contents( $pipes[ 1 ] );
+			$stderr	 = stream_get_contents( $pipes[ 2 ] );
+			fclose( $pipes[ 1 ] );
+			fclose( $pipes[ 2 ] );
+			proc_close( $process );
+
+			return $stdout != '';
+		}
+
+		return false;
 	}
 
 	/**
-	 * Constructor for class Grabber_Core_Config.
+	 * Create headers with context
 	 *
-	 * Fill config from WP get_settings or if not from defaults.
-	 *
-	 * @return Grabber_Core_Config
+	 * @param string $url The target url
+	 * @param object $url New stream_context_create
+	 * @param object $assoc Flag
+	 * @return string $headers
 	 */
-	private function __construct() {
-		// load settings from file
-		if ( file_exists( GRABBER_DIR . self::config_default ) && file_exists( GRABBER_DIR . 'vendor/Spyc.php' ) ) {
-			require_once GRABBER_DIR . 'vendor/Spyc.php';
+	function get_headers_with_stream_context( $url, $context, $assoc = 0 ) {
+		$fp			 = fopen( $url, 'r', null, $context );
+		$metaData	 = stream_get_meta_data( $fp );
+		fclose( $fp );
 
-			$file_data = spyc_load_file( GRABBER_DIR . self::config_default );
+		$headerLines = $metaData[ 'wrapper_data' ];
 
-			if ( isset( $file_data[ 'labels' ] ) && is_array( $file_data[ 'labels' ] ) ) {
-				foreach ( $file_data[ 'labels' ] as $k => $v )
-					Grabber_Core_Config::$labels[ $k ] = $v;
+		if ( !$assoc )
+			return $headerLines;
+
+		$headers = array();
+		foreach ( $headerLines as $line ) {
+			if ( strpos( $line, 'HTTP' ) === 0 ) {
+				$headers[ 0 ] = $line;
+				continue;
 			}
 
-			if ( isset( $file_data[ 'defaults' ] ) && is_array( $file_data[ 'defaults' ] ) ) {
-				foreach ( $file_data[ 'defaults' ] as $k => $v )
-					$this->defaults[ $k ] = $v;
-			}
+			list($key, $value) = explode( ': ', $line );
+			$headers[ $key ] = $value;
 		}
 
-		// update specific defaults
-		foreach ( $this->defaults as $k => &$v ) {
-			if ( in_array( $k, array( 'css_path', 'js_path', 'img_path' ) ) ) {
-				$v = GRABBER_DIR . $v;
-			} elseif ( in_array( $k, array( 'css_url', 'js_url', 'img_url' ) ) ) {
-				$v = parse_url( GRABBER_URL, PHP_URL_PATH ) . $v;
-			}
-		}
-
-		// override settings from WP storage
-		$this->config = get_settings( self::config_path );
+		return $headers;
 	}
 
-	/**
-	 * Sanitize for some of config values.
-	 *
-	 * @param string $k key of config.
-	 *
-	 * @return void
-	 */
-	private function sanitize( $k ) {
-		switch ( $k ) {
+	public static function get_web_page( $url ) {
+		
+		$res	 = array();
+		$options = array(
+			CURLOPT_RETURNTRANSFER	 => true, // return web page 
+			CURLOPT_HEADER			 => false, // do not return headers 
+			CURLOPT_FOLLOWLOCATION	 => true, // follow redirects 
+			CURLOPT_USERAGENT		 => "WordPress Easy Grabber", // who am i 
+			CURLOPT_AUTOREFERER		 => true, // set referer on redirect 
+			CURLOPT_CONNECTTIMEOUT	 => 120, // timeout on connect 
+			CURLOPT_TIMEOUT			 => 120, // timeout on response 
+			CURLOPT_MAXREDIRS		 => 10, // stop after 10 redirects 
+		);
+		$ch		 = curl_init( $url );
+		curl_setopt_array( $ch, $options );
+		$content = curl_exec( $ch );
+		$err	 = curl_errno( $ch );
+		$errmsg	 = curl_error( $ch );
+		$header	 = curl_getinfo( $ch );
+		curl_close( $ch );
 
-			case 'thread_norespond_timeout': case 'one_url_parse_timeout':
-				$max_execution_time = ini_get( 'max_execution_time' );
-				if ( $max_execution_time > 0 ) {
-					$this->config[ $k ] = min( $this->config[ $k ], $max_execution_time );
-				}
-				break;
-
-			case 'grab_list':
-				$array	 = array();
-				$arg	 = $this->config[ $k ];
-				$arg	 = str_replace( array( "\r\n", ',', ';' ), "\n", $arg );
-				$arg	 = explode( "\n", $arg );
-				foreach ( $arg as $i => &$url ) {
-					$url = trim( $url );
-					$url = ltrim( parse_url( $url, PHP_URL_PATH ), '/' );
-					if ( !empty( $url ) ) {
-						$array[] = $url;
-					}
-				}
-				$arg				 = array_unique( $array );
-				if( sizeof( $arg ) > 0 ){
-					
-					$this->config[ $k ]	 = implode( "\n", $arg );
-				}else{
-					
-					$this->config[ $k 	] = "/";
-				}
-				break;
-		}
+		$res[ 'content' ]	 = $content;
+		$res[ 'url' ]		 = $header[ 'url' ];
+		
+		return $content;
 	}
 
 }

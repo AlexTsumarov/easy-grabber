@@ -3,7 +3,7 @@ Contributors: AlexTsumarov
 Tags: grabber, auto poster, auto publisher, autoblog, autoposter, grabber, parser, parser html, plugin, Post, posts
 Requires at least: 3.0
 Tested up to: 3.5.2
-Stable tag: 0.0.10
+Stable tag: 0.0.11
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
