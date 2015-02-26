@@ -28,7 +28,8 @@ class Grabber_Controller_Admin extends Grabber_Core_Abstract {
 	 * @return void
 	 */
 	public function admin_menu() {
-		$this->conf->config_prefix = add_menu_page( 'Config', 'Grabber', 'administrator', $this->conf->config_slug, array( $this, 'render_config_page' ) );
+		$this->conf->config_prefix = add_menu_page( 'Config', 'Import by URL', 'administrator', $this->conf->config_slug, array( $this, 'render_config_page' ) );
+		add_submenu_page( $this->conf->config_slug, 'Config', 'Config', 'manage_options', $this->conf->config_slug, array( $this, 'render_config_page' ) );
 		add_submenu_page( $this->conf->config_slug, 'Queue', 'Queue', 'manage_options', $this->conf->run_slug, array( $this, 'render_run_page' ) );
 		add_submenu_page( $this->conf->thread_slug, 'Threads', 'Threads', 'manage_options', $this->conf->thread_slug, array( $this, 'render_runner_page' ) );
 	}
