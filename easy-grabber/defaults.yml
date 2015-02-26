@@ -3,8 +3,8 @@ defaults:
     grab_threads : 1
     cs_path : https://en.wikipedia.org/
     main_wrapper : #content
-    link_selector : .nav_tabs .selected a
-    tabs_selector : .nav_tabs li a
+    link_selector : 
+    tabs_selector : 
     follow_by_tabs : yes
     grab_resources : yes
     grab_links : yes
