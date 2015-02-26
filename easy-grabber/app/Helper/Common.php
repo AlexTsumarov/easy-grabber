@@ -101,14 +101,13 @@ class Grabber_Helper_Common {
 		return $headers;
 	}
 
-	public static function get_web_page( $url ) {
-		
+	function get_web_page( $url ) {
 		$res	 = array();
 		$options = array(
 			CURLOPT_RETURNTRANSFER	 => true, // return web page 
 			CURLOPT_HEADER			 => false, // do not return headers 
 			CURLOPT_FOLLOWLOCATION	 => true, // follow redirects 
-			CURLOPT_USERAGENT		 => "WordPress Easy Grabber", // who am i 
+			CURLOPT_USERAGENT		 => "spider", // who am i 
 			CURLOPT_AUTOREFERER		 => true, // set referer on redirect 
 			CURLOPT_CONNECTTIMEOUT	 => 120, // timeout on connect 
 			CURLOPT_TIMEOUT			 => 120, // timeout on response 
@@ -124,8 +123,7 @@ class Grabber_Helper_Common {
 
 		$res[ 'content' ]	 = $content;
 		$res[ 'url' ]		 = $header[ 'url' ];
-		
-		return $content;
+		return $res;
 	}
 
 }
